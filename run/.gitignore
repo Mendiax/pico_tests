@@ -1,0 +1,5 @@
+__pycache__
+config.yaml
+output.log
+defines.json
+pico_test_files
