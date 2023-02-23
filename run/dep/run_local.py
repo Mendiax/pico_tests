@@ -3,7 +3,7 @@ from dep.config import Config
 import subprocess
 import logging
 import sys
-
+from run_tests import main as run_test_target
 
 def run_command(cmd: str, file_name: str):
     """Runs a command and captures both stdout and stderr to the same file.
@@ -42,7 +42,7 @@ def run(config : Config) -> int:
     run_cmd('lsusb')
     run_cmd(f"picotool load -x -v {config.bin_file} -f")
     # ret = run_command(config.get_run_cmd(), "tests.log")
-    from .host_files.host.run_tests import main as run_test_target
+
     ret = run_test_target()
     res = "PASSED" if ret == 0 else "FAILED"
     print(f"test {res}")
