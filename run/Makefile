@@ -30,9 +30,14 @@ main:
 run:
 	python3 run_tests.py dep/config_local_tests.yaml
 
+run_ssh:
+	python3 run_tests.py dep/config.yaml
+
 build_run_main: cmaker main run_main
 	echo "build_run_main DONE"
 
+build_run_ssh: cmaker main run_ssh
+	echo "build_run_main DONE"
 
 
 
