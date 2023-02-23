@@ -1,6 +1,0 @@
-host: example.com
-username: user1
-password: password1
-destination_folder: /home/user1/files
-filename: bin
-script_filename: run.sh

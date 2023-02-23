@@ -17,13 +17,13 @@ def get_defines_from_file(header_file: str) -> dict:
                 defines[match.group(1)] = match.group(2)
     return defines
 
-def get_defines() -> dict:
-    """Scans PATH_TO_INC recursively and extract all defines from .h and .hpp files
+def get_defines(path_to_inc=PATH_TO_INC) -> dict:
+    """Scans path_to_inc recursively and extract all defines from .h and .hpp files
     using get_defines_from_file(header_file) function. Returns dictionary with all
     defines where keys are defines names and values are values of defines.
     """
     defines = {}
-    for root, dirs, files in os.walk(PATH_TO_INC):
+    for root, dirs, files in os.walk(path_to_inc):
         print(files)
         for file in files:
             if file.endswith((".h", ".hpp")):

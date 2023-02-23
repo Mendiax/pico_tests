@@ -27,8 +27,8 @@ cmaker:
 main:
 	cmake --build $(BUILD) --parallel $(NPROCS) --target $(PICO_MAIN_FILE) && echo "BUILD FINISHED"
 
-run_main:
-	python3 run_ssh.py
+run:
+	python3 run_tests.py dep/config_local_tests.yaml
 
 build_run_main: cmaker main run_main
 	echo "build_run_main DONE"
@@ -39,6 +39,7 @@ build_run_main: cmaker main run_main
 clean:
 	rm -rf  $(BUILD)
 	mkdir $(BUILD)
+	rm -f ../tests/tests/test_cases.h
 
 # rebuilds project
 rebuild: clean all

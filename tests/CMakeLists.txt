@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
+message("PICO_SDK_PATH=$ENV{PICO_SDK_PATH}")
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 project(pico
         VERSION 3.0
@@ -23,6 +24,7 @@ if (TARGET tinyusb_device)
                 message("SET PICO_MAIN_FILE = ${PICO_MAIN_FILE}")
         endif()
 
+        set(PICO_TEST_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
         set(PICO_TEST_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../pico_tests")
         add_subdirectory(${PICO_TEST_PATH} build)
 
@@ -31,34 +33,17 @@ if (TARGET tinyusb_device)
 
 
 
+        # Define the source and header directories
+        set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+        set(HEADER_DIR ${SOURCE_DIR})
 
-        # gen header
-            # Define the path to the Python script
-            set(PYTHON_SCRIPT_FILE "${PICO_TEST_PATH}/scripts/generate_header.py")
+        # Define the full path to the header file
+        set(HEADER_FILE "${HEADER_DIR}/test_cases.h")
 
-            # Define the source and header directories
-            set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
-            set(HEADER_DIR ${SOURCE_DIR})
-
-            # Define the full path to the header file
-            set(HEADER_FILE "${HEADER_DIR}/test_cases.h")
-
-            # Define the command to generate the header file
-            add_custom_command(
-            OUTPUT ${HEADER_FILE}
-            COMMAND python3 ${PYTHON_SCRIPT_FILE} ${HEADER_FILE} ${SOURCE_DIR}
-            DEPENDS ${PYTHON_SCRIPT_FILE} # List any dependencies of the command here
-            COMMENT "Generating header file"
-            )
-            # Add the header file as a target
-            add_custom_target(
-            generate_header_file ALL
-            DEPENDS ${HEADER_FILE}
-            )
-            # Add the header file as an include directory for the target
-            include_directories(${HEADER_DIR})
-            # Depend the target on the header file generation target
-            add_dependencies(${PICO_MAIN_FILE} generate_header_file)
+        # Add the header file as an include directory for the target
+        include_directories(${HEADER_DIR})
+        # Depend the target on the header file generation target
+        add_dependencies(${PICO_MAIN_FILE} generate_header_file)
 
 
 
@@ -77,5 +62,5 @@ if (TARGET tinyusb_device)
             pico_test
         )
 elseif(PICO_ON_DEVICE)
-        message(WARNING "not building hello_usb because TinyUSB submodule is not initialized in the SDK")
+        message(FATAL_ERROR "not building hello_usb because TinyUSB submodule is not initialized in the SDK")
 endif()

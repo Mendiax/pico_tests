@@ -1,0 +1,46 @@
+name: run
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: tests-on-target-${{ github.head_ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  cmake_build:
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+
+    steps:
+    # - name: Clone pico-sdk
+    #   uses: actions/checkout@v3
+    #   with:
+    #     repository: raspberrypi/pico-sdk
+    #     path: './pico-sdk'
+    # - name: setup env
+    #   run: |
+    #     ls
+    #     export PICO_SDK_PATH=$(pwd)/pico-sdk
+    #     echo $PICO_SDK_PATH
+    #     ls $PICO_SDK_PATH
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+
+    - name: build cmake for host
+      run: |
+        cd run && make
+
+  run:
+    needs: [cmake_build]
+    runs-on: self-hosted
+    steps:
+    - name: run tests
+      run: cd run && make run

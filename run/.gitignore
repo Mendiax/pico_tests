@@ -1,5 +1,8 @@
 __pycache__
-config.yaml
+dep/config.yaml
 output.log
 defines.json
 pico_test_files
+run/dep/host_files/run.sh
+run/dep/host_files/run_sudo.sh
+run/dep/host_files/bin/
