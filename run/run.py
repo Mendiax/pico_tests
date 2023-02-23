@@ -2,9 +2,11 @@ import argparse
 import logging
 import sys
 
-import dep.run_local as run_local
-import dep.run_ssh as run_ssh
-from dep.config import Config
+from dep import *
+
+# import dep.run_local as run_local
+# import dep.run_ssh as run_ssh
+# from dep.config import Config
 
 
 def get_arg_data():
@@ -20,15 +22,15 @@ def get_arg_data():
 
 def main():
     arguments = get_arg_data()
-    config = Config.from_yaml(arguments.config)
+    cfg = config.Config.from_yaml(arguments.config)
 
-    connection = config.get_connection_type()
+    connection = cfg.get_connection_type()
     print(f"connection={connection}")
     result = 0
     if connection == 'local':
-        result = run_local.run(config)
+        result = run_local.run(cfg)
     elif connection == 'ssh':
-        result = run_ssh.run(config)
+        result = run_ssh.run(cfg)
     else:
         raise Exception('Wrong connection parameter')
 

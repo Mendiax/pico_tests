@@ -5,7 +5,7 @@ import sys
 import traceback
 from datetime import datetime
 
-from device import PicoDevice
+from .device import PicoDevice
 
 # PATH_TO_HEADERS = "../inc"
 

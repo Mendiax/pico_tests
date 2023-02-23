@@ -3,7 +3,7 @@ from dep.config import Config
 import subprocess
 import logging
 import sys
-from run_tests import main as run_test_target
+from .host_files.host.run_tests import main as run_test_target
 
 def run_command(cmd: str, file_name: str):
     """Runs a command and captures both stdout and stderr to the same file.
