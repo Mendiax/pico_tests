@@ -22,6 +22,8 @@ int main() {
     tc_basic_interface();
 
     pico_test_end();
+
+
     while (true) {
         gpio_put(LED_PIN, 0);
         sleep_ms(500);

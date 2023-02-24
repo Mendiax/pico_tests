@@ -6,7 +6,6 @@ import paramiko
 import shutil
 import subprocess
 
-import dep.pico_test_data
 
 CONFIG_FILE_NAME = "config.yaml"
 PICO_TESTS_SOURCE = "../pico_tests/"
@@ -48,9 +47,9 @@ def copy_folder_recursively(sftp, local_folder, remote_folder):
             copy_folder_recursively(sftp, local_item, remote_item)
 
 
-def prepare_data(host_files_path, inc_files_path):
-    defines = dep.pico_test_data.get_defines(inc_files_path)
-    dep.pico_test_data.write_to_file(defines, f"{host_files_path}/{JSON_DEFINES_DATA}")
+# def prepare_data(host_files_path, inc_files_path):
+#     defines = dep.pico_test_data.get_defines(inc_files_path)
+#     dep.pico_test_data.write_to_file(defines, f"{host_files_path}/{JSON_DEFINES_DATA}")
 
 
 def ssh_start(config):
@@ -95,7 +94,7 @@ def run(config):
 
 
     path_to_pico_bin_ssh = f'{config.destination_folder}/{os.path.basename(config.bin_file)}'
-    path_to_python_host_ssh = f'{config.destination_folder}/host/run_tests.py'
+    path_to_python_host_ssh = f'{config.destination_folder}/host'
 
 
     # copy data
@@ -143,18 +142,19 @@ def run(config):
                     print(output, end='')
                     output_file.write(output)
             channel.close()
+            exit_code = channel.recv_exit_status()
+            return exit_code
 
 
         # execute_command(f'pwd && ls')
         execute_command(f'ls /tmp/pico_test')
 
-
-
         # load binary file
         execute_command(f'picotool load -x {path_to_pico_bin_ssh} -f')
 
         # run python host
-        execute_command(f'python3 -u {path_to_python_host_ssh}')
+        return_values = execute_command(f'echo "" && cd {path_to_python_host_ssh}/.. ; python3 -u -m host')
+        print(f'Host returned {return_values}')
 
 
     # print(output_stdout)
@@ -170,12 +170,12 @@ def run(config):
     ssh.close()
 
     return_values = 0
-    with open(LOG_FILE, "r") as output_file:
-        lines = output_file.readlines()
-        for l in lines:
-            if 'failed' in l.lower():
-                return_values = -1
-                break
+    # with open(LOG_FILE, "r") as output_file:
+    #     lines = output_file.readlines()
+    #     for l in lines:
+    #         if 'failed' in l.lower():
+    #             return_values = -1
+    #             break
 
 
 

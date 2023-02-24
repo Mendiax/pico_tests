@@ -23,6 +23,7 @@
 #define CR		13
 #define LF		10
 
+
 // #------------------------------#
 // | global variables definitions |
 // #------------------------------#
@@ -66,13 +67,13 @@ std::string read_non_block()
 void pico_test_start()
 {
     printf("\n\n");
-    PICO_TEST_PRINT("starting tests\n");
+    PICO_TEST_PRINT(CTX_MAIN_FUNC, "starting tests\n");
     while (1) {
-        PICO_TEST_PRINT("waiting for \"START\"\n");
+        PICO_TEST_PRINT(CTX_MAIN_FUNC, "waiting for \"START\"\n");
         sleep_ms(1000);
 
         if (read_non_block() == "START"){
-            PICO_TEST_PRINT("received \"START\"\n");
+            PICO_TEST_PRINT(CTX_MAIN_FUNC, "received \"START\"\n");
             break;
         }
     }
@@ -80,7 +81,7 @@ void pico_test_start()
 
 void pico_test_end()
 {
-    PICO_TEST_PRINT("STOP\n");
+    PICO_TEST_PRINT(CTX_MAIN_FUNC, "STOP\n");
     printf("\n\n");
 }
 
