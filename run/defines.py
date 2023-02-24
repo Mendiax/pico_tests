@@ -1,8 +1,11 @@
 import re
 import os
 import json
+import sys
 
 PATH_TO_INC = '../pico_tests'
+PATH_TO_HOST = 'dep/host_files/host'
+
 
 def get_defines_from_file(header_file: str) -> dict:
     """Extracts all defines from header_file and returns them
@@ -14,7 +17,13 @@ def get_defines_from_file(header_file: str) -> dict:
         for line in lines:
             match = re.search(r"#define\s+(\w+)\s+([\w\[\]+*.|()${}\-\"]+)", line)
             if match:
-                defines[match.group(1)] = match.group(2)
+                key = match.group(1)
+                val = match.group(2)
+                if val.startswith(r'"'):
+                    val = val[1:]
+                if val.endswith(r'"'):
+                    val = val[:-1]
+                defines[key] = val
     return defines
 
 def get_defines(path_to_inc=PATH_TO_INC) -> dict:
@@ -37,3 +46,8 @@ def write_to_file(dictionary :dict, file_name :str):
     """
     with open(file_name, 'w') as f:
         json.dump(dictionary, f, indent=4)
+
+if __name__ == "__main__":
+    current_file_path = os.path.dirname(os.path.abspath(__file__))
+    path_to_host = f"{current_file_path}/{PATH_TO_HOST}/defines.json"
+    write_to_file(get_defines(PATH_TO_INC), path_to_host)

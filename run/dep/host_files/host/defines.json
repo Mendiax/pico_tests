@@ -1,0 +1,12 @@
+{
+    "PICO_TEST_OUTPUT": "[PT-SUT]",
+    "PICO_TEST_START": "[TEST_STARTED]",
+    "PICO_TEST_PASSED": "[TEST_PASSED]",
+    "PICO_TEST_FAILED": "[TEST_FAILED]",
+    "CTX_MAIN_FUNC": "[MAIN_FUNC]",
+    "ESC": "",
+    "ESC_RESET": "ESC",
+    "ESC_RED": "ESC",
+    "ESC_GREEN": "ESC",
+    "ESC_WHITE": "ESC"
+}
