@@ -6,6 +6,7 @@
 // pico includes
 
 // c/c++ includes
+#include <string.h>
 
 // my includes
 #include "escape.hpp"
@@ -30,7 +31,8 @@
     TestCaseStats test_name(void){\
         printf("\n\n"); \
         PICO_TEST_PRINT(#test_name, PICO_TEST_START " "  "\n"); \
-        TestCaseStats stats = {0}; \
+        TestCaseStats stats; \
+        memset(&stats, 0 ,sizeof(stats)); \
         _##test_name(stats); \
         PICO_TEST_PRINT(#test_name, "finished\n"); \
         PICO_TEST_PRINT(#test_name, "checks:%3d\n", stats.asserts_checked); \
