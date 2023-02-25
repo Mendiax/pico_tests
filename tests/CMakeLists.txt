@@ -34,8 +34,8 @@ if (TARGET tinyusb_device)
 
 
         # Define the source and header directories
-        set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
-        set(HEADER_DIR ${SOURCE_DIR})
+        set(HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+        set(SOURCE_DIR ${HEADER_DIR})
 
         # Define the full path to the header file
         set(HEADER_FILE "${HEADER_DIR}/test_cases.h")
@@ -47,10 +47,9 @@ if (TARGET tinyusb_device)
 
 
 
-
-
-        aux_source_directory(tests DIR_src_SRCS)
-        target_sources(${PICO_MAIN_FILE} PRIVATE  ${DIR_src_SRCS})
+        file(GLOB_RECURSE PICO_TEST_SRC_FILES "${SOURCE_DIR}/*.cpp")
+        # aux_source_directory({SOURCE_DIR} DIR_src_SRCS)
+        target_sources(${PICO_MAIN_FILE} PRIVATE  ${PICO_TEST_SRC_FILES})
 
         pico_enable_stdio_usb( ${PICO_MAIN_FILE} 1)
         pico_enable_stdio_uart( ${PICO_MAIN_FILE} 0)

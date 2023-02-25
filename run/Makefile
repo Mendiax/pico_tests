@@ -36,7 +36,7 @@ run_ssh:
 build_run_main: cmaker main run_main
 	echo "build_run_main DONE"
 
-build_run_ssh: cmaker main run_ssh
+build_run_ssh: clean all run_ssh
 	echo "build_run_main DONE"
 
 

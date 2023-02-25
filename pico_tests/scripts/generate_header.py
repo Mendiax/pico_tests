@@ -19,11 +19,13 @@ def generate_header(header_path, source):
   header_contents = "#ifndef " + header_file_name_upper + "\n#define " + header_file_name_upper + "\n\n"
   header_contents += "#include \"test_types.hpp\"\n\n"
 
-  for filename in os.listdir(source):
-    if filename.endswith(".cpp"):
-      function_name = filename[:-4]
-      header_contents += "TestCaseStats " + function_name + "();\n"
-      logging.info("Parsed file: %s", filename)
+  for root, dirs, files in os.walk(source):
+    for filename in files:
+      if filename.endswith(".cpp"):
+        function_name = os.path.splitext(filename)[0]
+        header_contents += "TestCaseStats " + function_name + "();\n"
+        logging.info("Parsed file: %s", filename)
+
   header_contents += "\n#endif /* " + header_file_name_upper + " */\n"
 
   with open(header_path, "w") as header_file:

@@ -14,7 +14,7 @@ JSON_DEFINES_DATA = "defines.json"
 
 def print_host(*args, **kwargs):
     now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
+    current_time = "%s:" % now.strftime("%H:%M:%S")
     print(current_time, HOST_PRINT_TOKEN, *args, **kwargs)
 
 def get_defines(file_name):

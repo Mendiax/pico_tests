@@ -20,6 +20,8 @@ int main() {
 
     pico_test_start();
     tc_basic_interface();
+    tc_group_basic();
+
 
     pico_test_end();
 
