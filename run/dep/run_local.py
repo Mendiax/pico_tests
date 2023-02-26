@@ -40,7 +40,10 @@ def run_cmd(cmd:str):
 def run(config : Config) -> int:
     run_cmd('pwd')
     run_cmd('lsusb')
-    run_cmd(f"picotool load -x -v {config.bin_file} -f")
+    for x in range(5):
+        success = run_cmd(f"picotool load -x -v {config.bin_file} -f") == 0
+        if success:
+            break
     # ret = run_command(config.get_run_cmd(), "tests.log")
 
     ret = run_test_target()
