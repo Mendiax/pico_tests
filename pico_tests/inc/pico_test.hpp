@@ -91,12 +91,12 @@
         if (__stats.check_assert(expr)) \
         { \
             /*passed*/ \
-            PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_GREEN, "line %d: Check " #expr " PASSED " fmt "\n"), __LINE__, ##__VA_ARGS__); \
+            PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_GREEN, "line %d: Check " #expr " PASSED " fmt ) "\n", __LINE__, ##__VA_ARGS__); \
         } \
         else \
         { \
             /*failed*/ \
-            PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_RED, "line %d: Check " #expr " FAILED " fmt "\n"), __LINE__, ##__VA_ARGS__); \
+            PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_RED, "line %d: Check " #expr " FAILED " fmt ) "\n", __LINE__, ##__VA_ARGS__); \
         } \
     } while(0)
 
