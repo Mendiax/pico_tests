@@ -46,5 +46,5 @@ class PicoDevice(serial.Serial):
 
     def reset(self) -> None:
         print(subprocess.getoutput("picotool reboot -f"))
-        time.sleep(10.0)
+        time.sleep(5.0)
         self.__init__()
