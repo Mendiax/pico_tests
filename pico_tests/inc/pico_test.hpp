@@ -67,10 +67,12 @@
     } \
     void _##test_name(TestCaseStats& __stats)
 
-#define TEST_CASE_SUB_FUNCTION_DEF(sub_function) \
-    void _##sub_function(const char* __CONTEXT, TestCaseStats& __stats)
+#define TEST_CASE_SUB_FUNCTION_DEF_ARGS(sub_function, ...) \
+    _##sub_function(const char* __CONTEXT, TestCaseStats& __stats, ##__VA_ARGS__)
 
-#define xdd 1
+#define TEST_CASE_SUB_FUNCTION_DEF(sub_function) \
+    static void _##sub_function(const char* __CONTEXT, TestCaseStats& __stats)
+
 
 #define TEST_CASE_SUB_FUNCTION(sub_function) do{ \
     PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_WHITE, "<" #sub_function ">") " start\n"); \
@@ -81,6 +83,11 @@
     PICO_TEST_PRINT(__CONTEXT,ESC_PAINT(ESC_WHITE, "<" #sub_function ">") " checks:%3d\n", sub_func_stats.asserts_checked); \
     PICO_TEST_PRINT(__CONTEXT,ESC_PAINT(ESC_WHITE, "<" #sub_function ">") " passed:%3d\n", sub_func_stats.asserts_passed); \
     PICO_TEST_PRINT(__CONTEXT,ESC_PAINT(ESC_WHITE, "<" #sub_function ">") " failed:%3d\n\n", sub_func_stats.asserts_failed); \
+    } while(0)
+
+#define TEST_CASE_SUB_FUNCTION_ARGS(sub_function, ...) do{ \
+    PICO_TEST_PRINT(__CONTEXT, ESC_PAINT(ESC_WHITE, "<" #sub_function ">") "\n"); \
+    _##sub_function(__CONTEXT, __stats, ##__VA_ARGS__); \
     } while(0)
 
 

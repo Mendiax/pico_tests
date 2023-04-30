@@ -7,6 +7,7 @@ import sys
 from .host_files.host.run_tests import main as run_test_target
 
 def run_command(cmd: str):
+    print(f'run_command {cmd}')
     proc = subprocess.Popen(
         cmd,
         shell=True,
