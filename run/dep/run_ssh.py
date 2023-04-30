@@ -125,7 +125,7 @@ def run(config):
     # for line in iter(stdout.readline, ""):
     #     print(line, end="")
 
-    #
+    return_values = -1
     # upload binary to pico device and run tests
     with open(LOG_FILE, "w") as output_file:
 
@@ -169,7 +169,7 @@ def run(config):
 
     ssh.close()
 
-    return_values = 0
+
     # with open(LOG_FILE, "r") as output_file:
     #     lines = output_file.readlines()
     #     for l in lines:
