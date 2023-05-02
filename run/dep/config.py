@@ -1,6 +1,7 @@
 import yaml
 from dataclasses import dataclass
 from typing import Optional
+import os
 
 @dataclass
 class Config:
@@ -26,6 +27,22 @@ class Config:
             script_file=data.get('script_file'),
             destination_folder=data.get('destination_folder')
         )
+
+    def is_bin_file_folder(self):
+        return os.path.isdir(self.bin_file)
+
+    def get_bin_list(self):
+        if self.is_bin_file_folder():
+            # scan for .uf2 files
+            bin_files = []
+            for filename in os.listdir(self.bin_file):
+                if filename.endswith(".uf2"):
+                    bin_files.append(os.path.join(self.bin_file, filename))
+            assert len(bin_files) > 0
+            return bin_files
+        else:
+            return [self.bin_file]
+
 
     def get_connection_type(self) -> str:
         connection_type = 'local' if self.host == 'local' else 'ssh'

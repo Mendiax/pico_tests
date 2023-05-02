@@ -6,23 +6,13 @@ import paramiko
 import shutil
 import subprocess
 
+from dep.config import Config
+from .run_common import *
 
 CONFIG_FILE_NAME = "config.yaml"
 PICO_TESTS_SOURCE = "../pico_tests/"
 JSON_DEFINES_DATA = "defines.json"
 
-
-def put_dir(sftp, source, target):
-    ''' Uploads the contents of the source directory to the target path. The
-        target directory needs to exists. All subdirectories in source are
-        created under target.
-    '''
-    for item in os.listdir(source):
-        if os.path.isfile(os.path.join(source, item)):
-            sftp.put(os.path.join(source, item), '%s/%s' % (target, item))
-        else:
-            sftp.mkdir('%s/%s' % (target, item), ignore_existing=True)
-            sftp.put_dir(os.path.join(source, item), '%s/%s' % (target, item))
 
 def copy_folder_recursively(sftp, local_folder, remote_folder):
     # print(f'copy rec {local_folder=} {remote_folder=}')
@@ -39,17 +29,7 @@ def copy_folder_recursively(sftp, local_folder, remote_folder):
         if os.path.isfile(local_item):
             sftp.put(local_item, remote_item)
         else:
-            # try:
-            #     sftp.chdir(remote_item)  # Test if remote_path exists
-            # except IOError:
-            #     sftp.mkdir(remote_item)  # Create remote_path
-            #     sftp.chdir(remote_item)
             copy_folder_recursively(sftp, local_item, remote_item)
-
-
-# def prepare_data(host_files_path, inc_files_path):
-#     defines = dep.pico_test_data.get_defines(inc_files_path)
-#     dep.pico_test_data.write_to_file(defines, f"{host_files_path}/{JSON_DEFINES_DATA}")
 
 
 def ssh_start(config):
@@ -64,9 +44,7 @@ def ssh_start(config):
     return ssh
 
 
-
-
-def run(config):
+def run(config : Config):
 
     ssh = ssh_start(config)
     sftp = ssh.open_sftp()
@@ -88,27 +66,26 @@ def run(config):
     print('pwd:',subprocess.getoutput("pwd"))
     print('dep:', dep_folder_path)
     HOST_PYTHON_PATH = f'{dep_folder_path}/host_files'
-    # BINARY_FOLDER_PATH = f'{dep_folder_path}/host_files/bin'
-    # prepare_data(f"{config.test_folder}/host", PICO_TESTS_SOURCE)
-    # dest_file = config.destination_folder + "/" + os.path.basename(filename)
 
 
-    path_to_pico_bin_ssh = f'{config.destination_folder}/{os.path.basename(config.bin_file)}'
     path_to_python_host_ssh = f'{config.destination_folder}/host'
 
+    all_bin_files = config.get_bin_list()
+    print(f"running tests: {all_bin_files}")
 
     # copy data
     try:
         print('copying files')
         print(f"{HOST_PYTHON_PATH} -> { config.destination_folder}")
-        print(f"{config.bin_file} -> {path_to_pico_bin_ssh}")
-        # sftp.put(script_filename, dest_file_script)
-
         # copy python scripts and bin file over ssh
         copy_folder_recursively(sftp, HOST_PYTHON_PATH, config.destination_folder)
         print(f'copied python')
-        sftp.put(config.bin_file, path_to_pico_bin_ssh)
-        print(f'copied binary')
+
+        for bin_file in all_bin_files:
+            path_to_pico_bin_ssh = f'{config.destination_folder}/{os.path.basename(bin_file)}'
+            print(f"{bin_file} -> {path_to_pico_bin_ssh}")
+            sftp.put(bin_file, path_to_pico_bin_ssh)
+            print(f'copied binary')
 
     except Exception as e:
         logging.error("Failed to copy the file: %s", e)
@@ -145,38 +122,27 @@ def run(config):
             exit_code = channel.recv_exit_status()
             return exit_code
 
+        return_values = 0
+        # execute_command(f'ls /tmp/pico_test')
 
-        # execute_command(f'pwd && ls')
-        execute_command(f'ls /tmp/pico_test')
+        for bin_file in all_bin_files:
+            path_to_pico_bin_ssh = f'{config.destination_folder}/{os.path.basename(bin_file)}'
+            # load binary file
+            execute_command(f'picotool load -x {path_to_pico_bin_ssh} -f')
 
-        # load binary file
-        execute_command(f'picotool load -x {path_to_pico_bin_ssh} -f')
-
-        # run python host
-        return_values = execute_command(f'echo "" && cd {path_to_python_host_ssh}/.. ; python3 -u -m host')
-        print(f'Host returned {return_values}')
-
-
-    # print(output_stdout)
-    # print("Errors:")
-    # print(output_stderr)
+            # run python host
+            test_return_val = execute_command(f'echo "" && cd {path_to_python_host_ssh}/.. ; python3 -u -m host')
+            print(f'Host returned {test_return_val}')
+            if test_return_val != 0:
+                return_values = -1
 
     # Remove the bin file from the remote host
     remove = True
     if remove:
         ssh.exec_command("rm -rf " + config.destination_folder)
-        print("rm -rf " + config.destination_folder)
+        print("[CLEANUP] rm -rf " + config.destination_folder)
 
     ssh.close()
-
-
-    # with open(LOG_FILE, "r") as output_file:
-    #     lines = output_file.readlines()
-    #     for l in lines:
-    #         if 'failed' in l.lower():
-    #             return_values = -1
-    #             break
-
-
-
+    print(f"Tests ended with {return_values}")
+    print(f"Tests {passed_bool_to_str(return_values)}")
     return return_values
