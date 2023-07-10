@@ -36,6 +36,7 @@
 // | static functions declarations|
 // #------------------------------#
 
+#ifndef BUILD_FOR_HOST
 std::string read_non_block()
 {
     char strg[100] = {0};
@@ -60,6 +61,7 @@ std::string read_non_block()
 	}
     return std::string(strg);
 }
+#endif
 
 // #------------------------------#
 // | global function definitions  |
@@ -68,6 +70,7 @@ void pico_test_start()
 {
     printf("\n\n");
     PICO_TEST_PRINT(CTX_MAIN_FUNC, "starting tests\n");
+    #ifndef BUILD_FOR_HOST
     while (1) {
         PICO_TEST_PRINT(CTX_MAIN_FUNC, "waiting for \"START\"\n");
         sleep_ms(1000);
@@ -77,6 +80,7 @@ void pico_test_start()
             break;
         }
     }
+    #endif
 }
 
 void pico_test_end()
