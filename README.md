@@ -1,2 +1,2 @@
 # pico_tests
-Library for running tests on pico
+Library for running tests on Raspberry Pi Pico.
